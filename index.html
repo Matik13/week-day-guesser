@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Losowanie daty</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Losowanie daty</h1>
+    <p>Kliknij przycisk, aby wylosować datę. Następnie zgadnij dzień tygodnia!</p>
+    <button id="draw-date">Losuj datę</button>
+    <div id="date-display" style="margin-top: 20px; font-size: 18px; font-weight: bold;"></div>
+    
+    <div id="days-buttons" style="margin-top: 30px;">
+        <button data-day="0">Niedziela</button>
+        <button data-day="1">Poniedziałek</button>
+        <button data-day="2">Wtorek</button>
+        <button data-day="3">Środa</button>
+        <button data-day="4">Czwartek</button>
+        <button data-day="5">Piątek</button>
+        <button data-day="6">Sobota</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        const drawButton = document.getElementById("draw-date");
+        const dateDisplay = document.getElementById("date-display");
+        const resultDisplay = document.getElementById("result");
+        const daysButtons = document.querySelectorAll("#days-buttons button");
+
+        let currentDate;
+
+        // Funkcja do losowania daty
+        function drawRandomDate() {
+            const randomTimestamp = Math.floor(Math.random() * (new Date(2025, 0, 1).getTime() - new Date(2000, 0, 1).getTime())) 
+                                    + new Date(2000, 0, 1).getTime();
+            currentDate = new Date(randomTimestamp);
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            dateDisplay.textContent = `Wylosowana data: ${currentDate.toLocaleDateString('pl-PL', options)}`;
+            resultDisplay.textContent = "";
+        }
+
+        // Funkcja do sprawdzania wyniku
+        function checkDay(event) {
+            if (!currentDate) {
+                resultDisplay.textContent = "Najpierw wylosuj datę!";
+                return;
+            }
+            const guessedDay = parseInt(event.target.getAttribute("data-day"));
+            const actualDay = currentDate.getDay();
+            
+            if (guessedDay === actualDay) {
+                resultDisplay.textContent = "Brawo! Prawidłowo zgadłeś dzień tygodnia!";
+                resultDisplay.style.color = "green";
+            } else {
+                const days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
+                resultDisplay.textContent = `Nie zgadłeś. Prawidłowy dzień to ${days[actualDay]}.`;
+                resultDisplay.style.color = "red";
+            }
+        }
+
+        // Event listeners
+        drawButton.addEventListener("click", drawRandomDate);
+        daysButtons.forEach(button => button.addEventListener("click", checkDay));
+    </script>
+</body>
+</html>
