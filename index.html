@@ -9,12 +9,33 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 50px;
+            background-color: #121212;
+            color: #e0e0e0;
         }
-        button {
+        button, input {
             margin: 10px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        button:hover, input:hover {
+            background-color: #333333;
+            color: #ffffff;
+        }
+        #inputs-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100px;
+            text-align: center;
         }
         #result {
             margin-top: 20px;
@@ -25,7 +46,13 @@
 <body>
     <h1>Losowanie daty</h1>
     <p>Kliknij przycisk, aby wylosować datę. Następnie zgadnij dzień tygodnia!</p>
-    <button id="draw-date">Losuj datę</button>
+    
+    <div id="inputs-container">
+        <input id="lower-year" type="number" min="1" max="9999" placeholder="Rok od" value="2000">
+        <button id="draw-date">Losuj datę</button>
+        <input id="upper-year" type="number" min="1" max="9999" placeholder="Rok do" value="2025">
+    </div>
+    
     <div id="date-display" style="margin-top: 20px; font-size: 18px; font-weight: bold;"></div>
     
     <div id="days-buttons" style="margin-top: 30px;">
@@ -45,23 +72,36 @@
         const dateDisplay = document.getElementById("date-display");
         const resultDisplay = document.getElementById("result");
         const daysButtons = document.querySelectorAll("#days-buttons button");
+        const lowerYearInput = document.getElementById("lower-year");
+        const upperYearInput = document.getElementById("upper-year");
 
         let currentDate;
 
         // Funkcja do losowania daty
         function drawRandomDate() {
-            const randomTimestamp = Math.floor(Math.random() * (new Date(2025, 0, 1).getTime() - new Date(2000, 0, 1).getTime())) 
-                                    + new Date(2000, 0, 1).getTime();
+            const lowerYear = parseInt(lowerYearInput.value) || 2000;
+            const upperYear = parseInt(upperYearInput.value) || 2025;
+
+            if (lowerYear > upperYear) {
+                resultDisplay.textContent = "Błąd: Rok początkowy nie może być większy niż rok końcowy!";
+                resultDisplay.style.color = "red";
+                return;
+            }
+
+            const randomTimestamp = Math.floor(Math.random() * (new Date(upperYear, 11, 31).getTime() - new Date(lowerYear, 0, 1).getTime())) 
+                                    + new Date(lowerYear, 0, 1).getTime();
             currentDate = new Date(randomTimestamp);
             const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
             dateDisplay.textContent = `Wylosowana data: ${currentDate.toLocaleDateString('pl-PL', options)}`;
             resultDisplay.textContent = "";
+            resultDisplay.style.color = "#e0e0e0";
         }
 
         // Funkcja do sprawdzania wyniku
         function checkDay(event) {
             if (!currentDate) {
                 resultDisplay.textContent = "Najpierw wylosuj datę!";
+                resultDisplay.style.color = "red";
                 return;
             }
             const guessedDay = parseInt(event.target.getAttribute("data-day"));
@@ -69,7 +109,7 @@
             
             if (guessedDay === actualDay) {
                 resultDisplay.textContent = "Brawo! Prawidłowo zgadłeś dzień tygodnia!";
-                resultDisplay.style.color = "green";
+                resultDisplay.style.color = "limegreen";
             } else {
                 const days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
                 resultDisplay.textContent = `Nie zgadłeś. Prawidłowy dzień to ${days[actualDay]}.`;
