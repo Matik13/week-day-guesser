@@ -41,6 +41,12 @@
             margin-top: 20px;
             font-size: 18px;
         }
+
+        #date-display {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -53,7 +59,7 @@
         <input id="upper-year" type="number" min="1" max="9999" placeholder="Rok do" value="2025">
     </div>
     
-    <div id="date-display" style="margin-top: 20px; font-size: 18px; font-weight: bold;"></div>
+    <div id="date-display"></div>
     
     <div id="days-buttons" style="margin-top: 30px;">
         <button data-day="0">Niedziela</button>
@@ -74,10 +80,10 @@
         const daysButtons = document.querySelectorAll("#days-buttons button");
         const lowerYearInput = document.getElementById("lower-year");
         const upperYearInput = document.getElementById("upper-year");
+        const days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
 
         let currentDate;
 
-        // Funkcja do losowania daty
         function drawRandomDate() {
             const lowerYear = parseInt(lowerYearInput.value) || 2000;
             const upperYear = parseInt(upperYearInput.value) || 2025;
@@ -97,7 +103,6 @@
             resultDisplay.style.color = "#e0e0e0";
         }
 
-        // Funkcja do sprawdzania wyniku
         function checkDay(event) {
             if (!currentDate) {
                 resultDisplay.textContent = "Najpierw wylosuj datę!";
@@ -111,13 +116,11 @@
                 resultDisplay.textContent = "Brawo! Prawidłowo zgadłeś dzień tygodnia!";
                 resultDisplay.style.color = "limegreen";
             } else {
-                const days = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"];
                 resultDisplay.textContent = `Nie zgadłeś. Prawidłowy dzień to ${days[actualDay]}.`;
                 resultDisplay.style.color = "red";
             }
         }
 
-        // Event listeners
         drawButton.addEventListener("click", drawRandomDate);
         daysButtons.forEach(button => button.addEventListener("click", checkDay));
     </script>
